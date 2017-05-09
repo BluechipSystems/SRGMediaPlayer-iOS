@@ -16,19 +16,19 @@ static NSString * const SRGILTokenHandlerBaseURLString = @"http://tp.srgssr.ch/t
 
 #pragma mark - RTSMediaPlayerControllerDataSource protocol
 
-- (id) mediaPlayerController:(RTSMediaPlayerController *)mediaPlayerController
-	 contentURLForIdentifier:(NSString *)identifier
-		   completionHandler:(void (^)(NSString*, NSURL *, NSError *))completionHandler
+- (id)mediaPlayerController:(RTSMediaPlayerController *)mediaPlayerController
+    contentURLForIdentifier:(NSString *)identifier
+          completionHandler:(void (^)(NSString *identifier, NSURL *contentURL, AVAsset *contentAsset, NSError *error))completionHandler
 {
 	if ([identifier isEqualToString:@"error"]) {
-		completionHandler(identifier, nil, [NSError errorWithDomain:@"Demo" code:123456 userInfo:@{NSLocalizedDescriptionKey: @"error"}]);
+		completionHandler(identifier, nil, nil, [NSError errorWithDomain:@"Demo" code:123456 userInfo:@{NSLocalizedDescriptionKey: @"error"}]);
 	}
 	else if ([identifier isEqualToString:@"bonus"]) {
-		completionHandler(identifier, [NSURL URLWithString:@"http://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_640x360.m4v"], nil);
+		completionHandler(identifier, [NSURL URLWithString:@"http://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_640x360.m4v"], nil, nil);
 	}
 	else {
 		// Length is 30 minutes
-		completionHandler(identifier, [NSURL URLWithString:@"https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"], nil);
+		completionHandler(identifier, [NSURL URLWithString:@"https://devimages.apple.com.edgekey.net/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8"], nil, nil);
 	}
 	
 	// No need for a connection handle, completion handlers are called immediately

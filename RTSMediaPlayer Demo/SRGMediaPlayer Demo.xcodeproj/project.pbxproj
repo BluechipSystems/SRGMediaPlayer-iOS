@@ -394,6 +394,7 @@
 				TargetAttributes = {
 					C2F549EF1A9F713300496C59 = {
 						CreatedOnToolsVersion = 6.1.1;
+						DevelopmentTeam = 4M823EEANR;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -492,7 +493,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		C7E62927C080516ABF3F2439 /* [CP] Copy Pods Resources */ = {
@@ -659,13 +660,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Launch Image";
+				DEVELOPMENT_TEAM = 4M823EEANR;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(PODS_ROOT)/Headers/Public\"",
 				);
 				INFOPLIST_FILE = "RTSMediaPlayer Demo/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "ch.srgssr.SRGMediaPlayer-Demo";
+				PRODUCT_BUNDLE_IDENTIFIER = com.skeeet.test;
 				PRODUCT_NAME = "SRGMediaPlayer Demo";
 			};
 			name = Debug;
@@ -676,13 +678,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = "Launch Image";
+				DEVELOPMENT_TEAM = 4M823EEANR;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(PODS_ROOT)/Headers/Public\"",
 				);
 				INFOPLIST_FILE = "RTSMediaPlayer Demo/Supporting Files/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "ch.srgssr.SRGMediaPlayer-Demo";
+				PRODUCT_BUNDLE_IDENTIFIER = com.skeeet.test;
 				PRODUCT_NAME = "SRGMediaPlayer Demo";
 			};
 			name = Release;

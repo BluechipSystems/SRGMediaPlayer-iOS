@@ -43,6 +43,7 @@ NSString * const RTSMediaPlayerPlaybackDidFailErrorUserInfoKey = @"Error";
 NSString * const RTSMediaPlayerPreviousPlaybackStateUserInfoKey = @"PreviousPlaybackState";
 
 NSString * const RTSMediaPlayerStateMachineContentURLInfoKey = @"ContentURL";
+NSString * const RTSMediaPlayerStateMachineContentAVAssetInfoKey = @"ContentAVAsset";
 NSString * const RTSMediaPlayerPlaybackSeekingUponBlockingReasonInfoKey = @"BlockingReason";
 
 @interface RTSMediaPlayerController () <RTSMediaPlayerControllerDataSource, UIGestureRecognizerDelegate>
@@ -165,7 +166,7 @@ NSString * const RTSMediaPlayerPlaybackSeekingUponBlockingReasonInfoKey = @"Bloc
 // Used when initialized with `initWithContentURL:`
 - (id)mediaPlayerController:(RTSMediaPlayerController *)mediaPlayerController
 	contentURLForIdentifier:(NSString *)identifier
-		  completionHandler:(void (^)(NSString *identifier, NSURL *contentURL, NSError *error))completionHandler
+		  completionHandler:(void (^)(NSString *identifier, NSURL *contentURL, AVPlayerItem *playerItem, NSError *error))completionHandler
 {
 	if (!identifier) {
 		@throw [NSException exceptionWithName:NSInternalInconsistencyException
@@ -173,7 +174,7 @@ NSString * const RTSMediaPlayerPlaybackSeekingUponBlockingReasonInfoKey = @"Bloc
 									 userInfo:nil];
 	}
 	
-	completionHandler(identifier, [NSURL URLWithString:identifier], nil);
+	completionHandler(identifier, [NSURL URLWithString:identifier], nil, nil);
 	return nil;
 }
 
@@ -267,7 +268,7 @@ static NSDictionary *ErrorUserInfo(RTSMediaPlayerError code, NSString *localized
 										 userInfo:nil];
 		}
 		
-		self.contentURLRequestHandle = [self.dataSource mediaPlayerController:self contentURLForIdentifier:self.identifier completionHandler:^(NSString *identifier, NSURL *contentURL, NSError *error) {
+		self.contentURLRequestHandle = [self.dataSource mediaPlayerController:self contentURLForIdentifier:self.identifier completionHandler:^(NSString *identifier, NSURL *contentURL, AVAsset *contentAsset, NSError *error) {
             self.contentURLRequestHandle = nil;
             
             if (![identifier isEqualToString:self.identifier]) {
@@ -275,6 +276,9 @@ static NSDictionary *ErrorUserInfo(RTSMediaPlayerError code, NSString *localized
             }
             else if (contentURL) {
 				[self fireEvent:self.loadSuccessEvent userInfo:@{ RTSMediaPlayerStateMachineContentURLInfoKey : contentURL }];
+			}
+			else if (contentAsset) {
+				[self fireEvent:self.loadSuccessEvent userInfo:@{ RTSMediaPlayerStateMachineContentAVAssetInfoKey : contentAsset }];
 			}
             else {
                 NSError *dataSourceError = error ?: [NSError errorWithDomain:RTSMediaPlayerErrorDomain
@@ -289,10 +293,18 @@ static NSDictionary *ErrorUserInfo(RTSMediaPlayerError code, NSString *localized
 		@strongify(self)
 		
 		NSURL *contentURL = transition.userInfo[RTSMediaPlayerStateMachineContentURLInfoKey];
-		RTSMediaPlayerLogInfo(@"Player URL: %@", contentURL);
-		
+        AVAsset *contentAsset = transition.userInfo[RTSMediaPlayerStateMachineContentAVAssetInfoKey];
+        if(contentURL) {
+		    RTSMediaPlayerLogInfo(@"Player URL: %@", contentURL);
+            self.player = [AVPlayer playerWithURL:contentURL];
+        }
+        else if(contentAsset) {
+            RTSMediaPlayerLogInfo(@"Player Asset: %@", contentAsset);
+            AVPlayerItem * item = [AVPlayerItem playerItemWithAsset:contentAsset];
+            self.player = [AVPlayer playerWithPlayerItem:item];
+        }
+
 		// The player observes its "currentItem.status" keyPath, see callback in `observeValueForKeyPath:ofObject:change:context:`
-		self.player = [AVPlayer playerWithURL:contentURL];
 		self.player.muted = self.muted;
 		self.player.allowsExternalPlayback = self.allowsExternalPlayback;
 		self.player.usesExternalPlaybackWhileExternalScreenIsActive = self.usesExternalPlaybackWhileExternalScreenIsActive;
