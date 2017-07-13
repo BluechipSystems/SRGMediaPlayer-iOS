@@ -817,7 +817,7 @@ static const void * const AVPlayerItemBufferEmptyContext = &AVPlayerItemBufferEm
 			return;
 		}
 		
-		if ((self.player.rate == 1) && [self.stateMachine.currentState isEqual:self.pausedState]) {
+		if ((self.player.rate == 1) && ([self.stateMachine.currentState isEqual:self.pausedState] || [self.stateMachine.currentState isEqual:self.seekingState])) {
 			[self fireEvent:self.playEvent userInfo:nil];
 		}
 		
